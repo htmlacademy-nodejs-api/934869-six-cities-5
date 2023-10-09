@@ -1,24 +1,9 @@
 
 import dayjs from 'dayjs';
 import { OfferGenerator } from './offer-generator.interface.js';
-import { MockServerData, HousingType, City, Comfort, UserType, Coordinates } from '../../types/index.js';
-import { generateRandomValue, getRandomItem, getRandomItems } from '../../helpers/index.js';
+import { MockServerData, HousingType, Cities, Comfort, UserType } from '../../types/index.js';
+import { generateRandomValue, getRandomItem, getRandomItems, CITIES_X_COORDINATES } from '../../helpers/index.js';
 import { OfferRating, Rooms, Guests, Price, Comments, WeekDay } from './const.js';
-
-// const MIN_ROOMS = 1;
-// const MAX_ROOMS = 8;
-
-// const MIN_GOESTS = 1;
-// const MAX_GOESTS = 10;
-
-// const MIN_PRICE = 100;
-// const MAX_PRICE = 100000;
-
-// const MIN_COMMENTS = 0;
-// const MAX_COMMENTS = 25;
-
-// const FIRST_WEEK_DAY = 1;
-// const LAST_WEEK_DAY = 7;
 
 export class TSVOfferGenerator implements OfferGenerator {
   constructor(private readonly mockData: MockServerData) {}
@@ -31,7 +16,7 @@ export class TSVOfferGenerator implements OfferGenerator {
       .subtract(generateRandomValue(WeekDay.MIN, WeekDay.MAX), 'day')
       .toISOString();
 
-    const city = getRandomItem([City.Amsterdam, City.Brussels, City.Cologne, City.Dusseldorf, City.Hamburg, City.Paris]);
+    const city = getRandomItem([Cities.Amsterdam, Cities.Brussels, Cities.Cologne, Cities.Dusseldorf, Cities.Hamburg, Cities.Paris]);
     const preview = getRandomItem<string>(this.mockData.previewImages);
     const photos = getRandomItem<string[]>(this.mockData.images);
     const isPremium = getRandomItem<boolean>([true, false]);
@@ -41,13 +26,13 @@ export class TSVOfferGenerator implements OfferGenerator {
     const rooms = generateRandomValue(Rooms.MIN, Rooms.MAX);
     const guests = generateRandomValue(Guests.MIN, Guests.MAX);
     const price = generateRandomValue(Price.MIN, Price.MAX).toString();
-    const comfort = getRandomItems([Comfort.Conditioner, Comfort.BabySeat, Comfort.Breakfast, Comfort.Fridge, Comfort.BabySeat, Comfort.Towels, Comfort.Washer]);
+    const comfort = getRandomItems([Comfort['Air conditioning'], Comfort['Laptop friendly workspace'], Comfort.Breakfast, Comfort.Fridge, Comfort['Baby seat'], Comfort.Towels, Comfort.Washer]);
     const name = getRandomItem(this.mockData.users);
     const email = getRandomItem(this.mockData.emails);
     const avatar = getRandomItem(this.mockData.avatars);
     const userType = getRandomItem([UserType.Pro, UserType.User]);
     const commentsNumber = generateRandomValue(Comments.MIN, Comments.MAX);
-    const coordinates = Coordinates[city];
+    const coordinates = CITIES_X_COORDINATES[city];
 
     return [
       title, description, createdDate, city,
