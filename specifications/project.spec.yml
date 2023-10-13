@@ -1,0 +1,495 @@
+openapi: 3.0.0
+info:
+  title: API сервер для проекта SIX-SITIES 
+  description: |-
+    * Список ресурсов и маршрутов сервера «six-sities».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: "1.0.0"
+tags:
+  - name: offers
+    description: Действия с предложениями
+  - name: comments
+    description: Действия с комментариями
+  - name: users
+    description: Действия с пользователем
+
+paths: 
+
+  /offers/reqister:
+    post:
+      tags:
+        - offers
+      summary: Добавление предложения
+      description: Добавляет новое предложение
+
+      requestBody:
+        description: Информация для создания нового предложения
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/fullOffer'
+        required: true
+
+      responses:
+        "201": 
+          description: Предложение добавлено. Объект предложения
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fullOffer'
+
+        "405":
+          description: Данные не прошли валидацию
+
+  /offers/{offerId}:
+    get:
+        tags:
+          - offers
+        summary: Получение предложения
+        description: Получает детальную информацию по предложению
+
+        responses:
+          "201": 
+            description: Получение объекта предложения
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/fullOffer'
+
+    patch:
+      tags:
+        - offers
+      summary: Редактирование предложения
+      description: Вносит изменени в предложение на основе его id
+
+      requestBody:
+        description: Информация для обновления предложения
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/fullOffer'
+        required: true
+
+      responses:
+        "201":
+          description: Предложение успешно обновлено. Возвращает обновленное предложение
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  schema:
+                    $ref: '#/components/schemas/fullOffer'
+
+        "405":
+          description: Данные не прошли валидацию
+
+        "409":
+          description: Пользователь не является автором объявления
+
+    delete:
+      tags:
+        - offers
+      summary: Удаление предложения
+      description: Удаляет предложение по его id
+
+      responses:
+        "201":
+          description: Предложение успешно удалено
+
+        "409":
+          description: Пользователь не является автором объявления
+
+  /offers:
+    get:
+      tags:
+        - offers
+      summary: Получение всех предложений
+      description: Получает список всех имеющихся предложений с опредленными полями
+
+      responses:
+          "201": 
+            description: Получение массива объектов предложений (не более 60 штук).
+              Данные отсортированы по дате публикации (по убыванию)
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/previewOffer'
+
+  /offers/{city}/premium:
+    get:
+      tags:
+        - offers
+      summary: Получение премиальных предложений в городе
+      description: Получает список всех премиальных предложений в определенном городе (не более 3).
+        Сортировка по дате публикации
+
+      responses:
+        "201":
+          description: Получит массив премиальных предложений города (не более 3)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/previewOffer'
+  
+  /offers/{userId}/favourites:
+    post:
+        tags:
+          - offers
+        summary: Добавление предложения в избранное
+        description: Добавит предложение в избранные для авторизированного пользователя
+
+        responses:
+          "201":
+            description: Добавит предложение в избранные предложения пользователя
+    get:
+        tags:
+          - offers
+        summary: Получение избранных предложений
+        description: Получает все избранные предложения авторизованного пользователя
+
+        responses:
+          "201":
+            description: Получит массив избранных предложений пользователя
+
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/previewOffer'
+
+  /offers/{userId}/favourites/{offerId}:
+    delete:
+      tags:
+        - offers
+      summary: Удаление предложения из избранного
+      description: Удаляет предложение по его id из избранных предложений авторизованного пользователя
+
+      responses:
+        "201":
+          description: Предложение успешно удалено из избранного
+
+  /comments/{offerId}:
+    get:
+      tags:
+        - comments
+      summary: Получение комментариев
+      description: Получает список все комментарии по определенному предложению
+
+      responses:
+        "201": 
+          description: Получение списка кооментариев (50 и меньше последних комментариев).
+            Комментарии отсортированы по дате публикации (по убыванию)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+    
+    post:
+      tags:
+        - comments
+      summary: Добавление комментария
+      description: Добавляет новый комментарий к предложению
+
+      requestBody:
+        description: Информация для создания нового комментария
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                text: 
+                  type: string
+                  example: Текст комментария
+
+                rating:
+                  type: number
+                  example: 1
+
+                authorId:
+                  type: string
+                  example: 6524578b3e67fd0291b6996f
+        required: true
+
+      responses:
+        "201": 
+          description: Получение созданного комментария
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+
+        "405":
+          description: Данные не прошли валидацию  
+
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя
+
+      requestBody:
+        description: Информация для создания нового пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+        required: true
+
+      responses:
+        "201": 
+          description: Пользователь зарегистрирован. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+                properties:
+                  password:
+                    type: string
+                    example: 123456
+
+        "409":
+          description: Пользователь с таким email уже существует
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Аутентификации и авторизации пользователя
+      description: Авторизирует пользователя на основе логина и пароля
+
+      requestBody:
+        description: Информация для создания нового пользователя
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: test@mail.ru
+
+                password:
+                  type: string
+                  example: 123456
+        required: true
+
+      responses:
+        "201": 
+          description: Пользователь авторизирован
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  token:
+                    type: string
+                    example: '###################'
+
+        "409":
+          description: Логин или пароль неверные или пользователь не существует
+
+    get:
+      tags:
+        - users
+
+      summary: Получение информации об авторизации пользователя
+      description: Получит данные пользователя на основе токена
+
+      responses:
+        "201": 
+          description: Пользователь авторизирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+
+components:
+  schemas:
+    fullOffer:
+      type: object
+
+      properties:
+        title: 
+          type: string
+          example: Заголовок предложения
+
+        description:
+          type: string
+          example: Описание предложения
+
+        createdDate:
+          type: string
+          example: '2023-09-22T16:17:26.404Z'
+
+        city: 
+          type: string
+          example: 'Один из 6 городов'
+
+        previewImage:
+          type: string
+          example: 'studio.jpg'
+
+        images: 
+          type: array
+          example: ['studio.jpg', 'studio-1.jpg']
+
+        isPremium: 
+          type: boolean
+          example: false
+
+        isFavourites: 
+          type: boolean
+          example: false
+
+        rating: 
+          type: number
+          example: 0
+
+        housingType: 
+          type: string
+          example: 'studio'
+
+        rooms: 
+          type: number
+          example: 1
+        
+        guestsNumber: 
+          type: number
+          example: 1
+
+        price: 
+          type: number
+          example: 100
+
+        comfort: 
+          type: array
+          example: ['Fridge', 'Towels']
+
+        userType: 
+          type: string
+          example: User
+
+        comments: 
+          type: number
+          example: 0
+        
+        userId:
+          type: string
+          example: '6524578b3e67fd0291b6996f'
+
+        coordinates:
+          type: object
+          $ref: '#/components/schemas/coordinates'
+
+    previewOffer:
+      type: object
+
+      properties:
+        price: 
+          type: number
+          example: 100
+        
+        title: 
+          type: string
+          example: Заголовок предложения
+
+        housingType: 
+          type: string
+          example: 'studio'
+
+        isFavourites: 
+          type: boolean
+          example: false
+
+        createdDate:
+          type: string
+          example: '2023-09-22T16:17:26.404Z'
+
+        city: 
+          type: string
+          example: 'Один из 6 городов'
+
+        previewImage:
+          type: string
+          example: 'studio.jpg'
+
+        isPremium: 
+          type: boolean
+          example: false
+        
+        rating: 
+          type: number
+          example: 0
+
+        comments: 
+          type: number
+          example: 0
+
+    comment:
+      type: object
+
+      properties:
+        text: 
+          type: string
+          example: Текст комментария
+
+        rating:
+          type: number
+          example: 1
+
+        authorId:
+          type: string
+          example: 6524578b3e67fd0291b6996f
+
+        createdDate:
+          type: string
+          example: 2023-09-22T16:17:26.404Z
+
+    coordinates:
+      type: object
+      properties:
+            lat:
+              type: string
+              example: '48.85661'
+            long:
+              type: string
+              example: '2.351499'
+
+    user:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: test@mail.ru
+        
+        name:
+          type: string
+          example: John Doe
+
+        avatar:
+          type: string
+          example: awesome-avatar.jpg
+
+        userType:
+          type: string
+          example: User
+
+        id: 
+          type: string
+          example: 6524578b3e67fd0291b6996f
