@@ -1,7 +1,6 @@
 # Предложения
 ## Получить список предложений
 GET http://localhost:5000/offers HTTP/1.1
-Content-Type: application/json
 
 ###
 
@@ -11,7 +10,7 @@ Content-Type: application/json
 
 {
   "title": "Лофт в подземелье",
-  "description": "Адски красивый лофт",
+  "description": "Адски красивый лофт 1",
   "createdDate": "2023-09-23T16:17:26.406Z",
   "city": "Paris",
   "previewImage": "loft-hell.jpg",
@@ -24,7 +23,7 @@ Content-Type: application/json
   "isFavourites": false,
   "rating": 0,
   "housingType": "apartment",
-  "rooms": 5,
+  "rooms": 55,
   "guestsNumber": 10,
   "price": 13666,
   "comfort": [
@@ -38,4 +37,37 @@ Content-Type: application/json
 
 
 ###
-## Получить предложение
+
+## Получить объявление по идентификатору
+GET http://localhost:5000/offers/652466b0b9e6a61f32d09690 HTTP/1.1
+
+###
+
+## Удалить объявление по идентификатору
+DELETE http://localhost:5000/offers/6524691c2bf47fa9a8cf4e5c HTTP/1.1
+
+###
+
+## Обновить объявление
+
+PATCH http://localhost:5000/offers/652466b0b9e6a61f32d09690 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Лара Лофт на монсарде",
+  "description": "Проверка обновления часть 2",
+  "price": 1100,
+  "isPremium": true
+}
+
+###
+
+## Получить комментариев к объявлению
+GET http://localhost:5000/offers/652466b0b9e6a61f32d09690/comments HTTP/1.1
+
+###
+
+## Получить премиальные предложения по городу
+GET http://localhost:5000/offers/premium/Brussels HTTP/1.1
+
+###
