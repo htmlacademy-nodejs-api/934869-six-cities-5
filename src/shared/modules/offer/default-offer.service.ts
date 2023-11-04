@@ -1,15 +1,16 @@
-import { StatusCodes } from 'http-status-codes';
 import { inject, injectable } from 'inversify';
-import { PipelineStage } from 'mongoose';
+
+import
+// mongoose,
+{ PipelineStage } from 'mongoose';
 import {Types} from 'mongoose';
 
 import { DocumentType, types } from '@typegoose/typegoose';
 
 import { Logger } from '../../libs/logger/index.js';
-import { HttpError } from '../../libs/rest/index.js';
 import { Component } from '../../types/index.js';
-import { UserEntity } from '../user/user.entity.js';
-import AGREGATE_OPERATIONS from './const/comments-aggregate.const.js';
+import { UserEntity } from '../user/index.js';
+import AGREGATE_OPERATIONS from './const/aggregate-operation.const.js';
 import { DEFAULT_OFFER_COUNT, DEFAULT_PREMIUM_OFFER_COUNT} from './const/offer.constant.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
@@ -25,12 +26,6 @@ export class DefaultOfferService implements OfferService {
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
-    const user = await this.userModel.findById(dto.userId);
-
-    if (!user) {
-      throw new HttpError(StatusCodes.BAD_REQUEST, 'Some user not exist', 'DefaultUserService');
-    }
-
     const result = await this.offerModel.create(dto);
 
     this.logger.info(`New offer created: ${dto.title}`);
@@ -38,12 +33,21 @@ export class DefaultOfferService implements OfferService {
     return result;
   }
 
-  public async find(count?: number): Promise<DocumentType<OfferEntity>[]> {
+  public async find(count?: number, userId?: string): Promise<DocumentType<OfferEntity>[]> {
 
     const limit = { $limit: count ?? DEFAULT_OFFER_COUNT };
+    const activeUser = await this.userModel.findById(userId);
+    const favourites = activeUser?.favorites;
 
     const pipeLine: PipelineStage[] = [
       limit,
+      {
+        $addFields: {
+          isFavourites: {
+            $in: ['$_id', favourites]
+          }
+        }
+      },
       AGREGATE_OPERATIONS.SORT_DOWN,
       AGREGATE_OPERATIONS.COMMENTS_LOOKUP,
       AGREGATE_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
@@ -72,13 +76,9 @@ export class DefaultOfferService implements OfferService {
       .exec();
 
     return offer;
-
-    // return this.offerModel.aggregate(pipeLine).exec();
   }
 
   public async deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
-    // Необходимо удалить все комментарии, связанные с предложением
-
     return this.offerModel
       .findByIdAndDelete(offerId)
       .exec();
@@ -112,6 +112,35 @@ export class DefaultOfferService implements OfferService {
     ];
 
     return this.offerModel.aggregate(pipeLine).exec();
+  }
+
+  public async findFavouritesByUserId(userId: string): Promise<DocumentType<OfferEntity>[]> {
+
+    const activeUser = await this.userModel.findById(userId);
+    const favourites = activeUser?.favorites;
+
+    const pipeline: PipelineStage[] = [
+      {
+        $match: {
+          '_id': {
+            $in: activeUser?.favorites
+          }
+        }
+      },
+      {
+        $addFields: {
+          isFavourites: {
+            $in: ['$_id', favourites]
+          }
+        }
+      },
+      AGREGATE_OPERATIONS.SORT_DOWN,
+      AGREGATE_OPERATIONS.COMMENTS_LOOKUP,
+      AGREGATE_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
+      AGREGATE_OPERATIONS.DELETE_COMMENTS_FIELD
+    ];
+
+    return this.offerModel.aggregate(pipeline).exec();
   }
 
   public async exists(documentId: string): Promise<boolean> {

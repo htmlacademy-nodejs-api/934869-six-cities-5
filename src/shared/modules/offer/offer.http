@@ -1,18 +1,20 @@
 # Предложения
 ## Получить список предложений
 GET http://localhost:5000/offers HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV3IFVTZXIiLCJlbWFpbCI6Im5ld1VzZXJAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlVzZXIiLCJpZCI6IjY1NDI0NzU1NGY4OWI0MTk3YzdkOGY1OCIsImlhdCI6MTY5ODg0MjQ1OCwiZXhwIjoxNjk5MDE1MjU4fQ.QkxotG1YGXDAS1RLIRXy0f7JQSNnMTSjzObK1j5RVik
 
 ###
 
 ## Добавить новое предложение
 POST http://localhost:5000/offers HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV3IFVTZXIiLCJlbWFpbCI6Im5ld1VzZXJAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlVzZXIiLCJpZCI6IjY1NDI0NzU1NGY4OWI0MTk3YzdkOGY1OCIsImlhdCI6MTY5ODg0MjQ1OCwiZXhwIjoxNjk5MDE1MjU4fQ.QkxotG1YGXDAS1RLIRXy0f7JQSNnMTSjzObK1j5RVik
 Content-Type: application/json
 
 {
-  "title": "Лофт в подземелье",
-  "description": "Адски красивый лофт 1",
+  "title": "B еще одно ТУЦОВОЕ место",
+  "description": "Тутцовое местечко для тутцовки",
   "createdDate": "2023-09-23T16:17:26.406Z",
-  "city": "Paris",
+  "city": "Brussels",
   "previewImage": "loft-hell.jpg",
   "images": [
     "loft-hell-1.jpg",
@@ -23,15 +25,14 @@ Content-Type: application/json
   "isFavourites": false,
   "rating": 0,
   "housingType": "apartment",
-  "rooms": 55,
+  "rooms": 5,
   "guestsNumber": 10,
-  "price": 13666,
+  "price": 99999,
   "comfort": [
     "Air conditioning",
     "Laptop friendly workspace",
     "Fridge"
   ],
-  "userId": "652466b0b9e6a61f32d09684",
   "coordinates": ["48.85661", "2.351499"]
 }
 
@@ -39,24 +40,26 @@ Content-Type: application/json
 ###
 
 ## Получить объявление по идентификатору
-GET http://localhost:5000/offers/652466b0b9e6a61f32d09690 HTTP/1.1
+GET http://localhost:5000/offers/654263742fa5719801084195 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV3IFVTZXIiLCJlbWFpbCI6Im5ld1VzZXJAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlVzZXIiLCJpZCI6IjY1NDI0NzU1NGY4OWI0MTk3YzdkOGY1OCIsImlhdCI6MTY5ODg0MjQ1OCwiZXhwIjoxNjk5MDE1MjU4fQ.QkxotG1YGXDAS1RLIRXy0f7JQSNnMTSjzObK1j5RVik
 
 ###
 
 ## Удалить объявление по идентификатору
-DELETE http://localhost:5000/offers/6524691c2bf47fa9a8cf4e5c HTTP/1.1
+DELETE http://localhost:5000/offers/6540ad1fd8e6f337ea72d15c HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTGVicm9uZSBGaXJzdCIsImVtYWlsIjoibGViTEFAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlBybyIsImlkIjoiNjUzZjczNjAwMDQ1NWY2MWViNzIzY2FmIiwiaWF0IjoxNjk4NzM0MzE1LCJleHAiOjE2OTg5MDcxMTV9.zAo16oVUNMpcvrlCZQJOhRL7Eg2CiZmWnOtyo-egk3M
 
 ###
 
 ## Обновить объявление
 
-PATCH http://localhost:5000/offers/652466b0b9e6a61f32d09690 HTTP/1.1
+PATCH http://localhost:5000/offers/6540ad1fd8e6f337ea72d15c HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTGVicm9uZSBGaXJzdCIsImVtYWlsIjoibGViTEFAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlBybyIsImlkIjoiNjUzZjczNjAwMDQ1NWY2MWViNzIzY2FmIiwiaWF0IjoxNjk4NzM0MzE1LCJleHAiOjE2OTg5MDcxMTV9.zAo16oVUNMpcvrlCZQJOhRL7Eg2CiZmWnOtyo-egk3M
 Content-Type: application/json
 
 {
-  "title": "Лара Лофт на монсарде",
-  "description": "Проверка обновления часть 2",
-  "price": 1100,
+  "city": "Paris",
+  "price": 1200,
   "isPremium": true
 }
 
@@ -69,5 +72,11 @@ GET http://localhost:5000/offers/652466b0b9e6a61f32d09690/comments HTTP/1.1
 
 ## Получить премиальные предложения по городу
 GET http://localhost:5000/offers/premium/Brussels HTTP/1.1
+
+###
+
+## Получить избранные предложения пользователя
+GET http://localhost:5000/offers/bundles/favorites HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV3IFVTZXIiLCJlbWFpbCI6Im5ld1VzZXJAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlVzZXIiLCJpZCI6IjY1NDI0NzU1NGY4OWI0MTk3YzdkOGY1OCIsImlhdCI6MTY5ODg0MjQ1OCwiZXhwIjoxNjk5MDE1MjU4fQ.QkxotG1YGXDAS1RLIRXy0f7JQSNnMTSjzObK1j5RVik
 
 ###

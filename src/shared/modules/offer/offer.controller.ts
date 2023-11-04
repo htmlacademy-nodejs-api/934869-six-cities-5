@@ -4,10 +4,14 @@ import {
   ValidateDtoMiddleware,
   DocumentExistsMiddleware,
   ValidateObjectIdMiddleware,
+  PrivateRouteMiddleware,
+  ParseTokenMiddleware,
+  AuthorshipVerificateMiddleware,
 } from '../../libs/rest/index.js';
 import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 
+import { Config, RestSchema } from '../../libs/config/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { fillDTO } from '../../helpers/common.js';
 import { Component } from '../../types/index.js';
@@ -23,24 +27,37 @@ export class OfferController extends BaseController {
   constructor(
     @inject(Component.Logger) protected logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService,
-    @inject(Component.CommentService) private readonly commentService: CommentService
+    @inject(Component.CommentService) private readonly commentService: CommentService,
+    @inject(Component.Config) private readonly configService: Config<RestSchema>,
   ) {
     super(logger);
 
     this.logger.info('Register routes for OfferController..');
 
-    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+      middlewares: [
+        new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
+      ]
+    });
     this.addRoute({
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateOfferDto)]
+      middlewares: [
+        new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateOfferDto)
+      ]
     });
     this.addRoute({
       path: '/:offerId',
       method: HttpMethod.Get,
       handler: this.show,
       middlewares: [
+
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ]
@@ -50,8 +67,11 @@ export class OfferController extends BaseController {
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
+        new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+        new AuthorshipVerificateMiddleware(this.offerService, 'offerId')
       ]
     });
     this.addRoute({
@@ -59,9 +79,12 @@ export class OfferController extends BaseController {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
+        new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('offerId'),
         new ValidateDtoMiddleware(UpdateOfferDto),
-        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId')
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+        new AuthorshipVerificateMiddleware(this.offerService, 'offerId')
       ]
     });
     this.addRoute({
@@ -74,18 +97,27 @@ export class OfferController extends BaseController {
       ]
     });
     this.addRoute({ path: '/premium/:city', method: HttpMethod.Get, handler: this.getPremium });
+    this.addRoute({
+      path: '/bundles/favorites',
+      method: HttpMethod.Get,
+      handler: this.getFavourites,
+      middlewares: [
+        new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
+        new PrivateRouteMiddleware(),
+      ]
+    });
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    const offers = await this.offerService.find(DEFAULT_OFFER_COUNT);
+  public async index({ tokenPayload: { id }}: Request, res: Response): Promise<void> {
+    const offers = await this.offerService.find(DEFAULT_OFFER_COUNT, id);
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
   public async create(
-    { body }: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferDto>,
+    { body, tokenPayload }: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferDto>,
     res: Response
   ): Promise<void> {
-    const result = await this.offerService.create(body);
+    const result = await this.offerService.create({ ...body, userId: tokenPayload.id });
     const offer = await this.offerService.findById(result.id);
     this.created(res, fillDTO(FullOfferRdo, offer));
   }
@@ -96,6 +128,7 @@ export class OfferController extends BaseController {
   }
 
   public async delete({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    await this.commentService.deleteByOfferId(params.offerId);
     const offer = await this.offerService.deleteById(params.offerId);
     this.noContent(res, offer);
   }
@@ -113,5 +146,10 @@ export class OfferController extends BaseController {
   public async getPremium({ params }: Request<ParamCity>, res: Response): Promise<void> {
     const premiumOffers = await this.offerService.findPremimByCity(params.city, DEFAULT_PREMIUM_OFFER_COUNT);
     this.ok(res, fillDTO(OfferRdo, premiumOffers));
+  }
+
+  public async getFavourites({ tokenPayload }: Request, res: Response): Promise<void> {
+    const favouriteOffers = await this.offerService.findFavouritesByUserId(tokenPayload.id);
+    this.ok(res, fillDTO(OfferRdo, favouriteOffers));
   }
 }

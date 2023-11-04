@@ -7,11 +7,12 @@ import { OfferEntity } from './offer.entity.js';
 
 export interface OfferService extends DocumentExists {
   create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>>;
-  find(count: number): Promise<DocumentType<OfferEntity>[]>;
+  find(count: number, userId: string): Promise<DocumentType<OfferEntity>[]>;
   findById(offerId: string): Promise<DocumentType<OfferEntity> | null>;
   deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null>;
   updateById(offerId: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null>;
   findPremimByCity(city: string, count?: number): Promise<DocumentType<OfferEntity>[]>;
+  findFavouritesByUserId(userId: string): Promise<DocumentType<OfferEntity>[]>;
   incCommentCount(offerId: string): Promise<DocumentType<OfferEntity> | null>;
   exists(documentId: string): Promise<boolean>;
 }

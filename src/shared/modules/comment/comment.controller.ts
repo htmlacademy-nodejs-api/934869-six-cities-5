@@ -1,15 +1,22 @@
+import {
+  BaseController,
+  HttpMethod,
+  ParseTokenMiddleware,
+  PrivateRouteMiddleware,
+  ValidateDtoMiddleware
+} from '../../libs/rest/index.js';
 import { Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { inject, injectable } from 'inversify';
 
+import { Config, RestSchema } from '../../libs/config/index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { BaseController, HttpError, HttpMethod } from '../../libs/rest/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { Component } from '../../types/index.js';
 import { OfferService } from '../offer/index.js';
-import { CommentRdo } from './rdo/comment.rdo.js';
 import { CreateCommentRequest } from './type/create-comment-request.type.js';
 import { CommentService } from './comment-service.interface.js';
+import { CommentRdo } from './index.js';
+import { CreateCommentDto } from './index.js';
 
 @injectable()
 export default class CommentController extends BaseController {
@@ -17,27 +24,29 @@ export default class CommentController extends BaseController {
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.CommentService) private readonly commentService: CommentService,
     @inject(Component.OfferService) private readonly offerService: OfferService,
+    @inject(Component.Config) private readonly configService: Config<RestSchema>,
   ) {
     super(logger);
 
     this.logger.info('Register routes for CommentController...');
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [
+        new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateCommentDto)
+      ],
+    });
   }
 
   public async create(
-    { body }: CreateCommentRequest,
+    { body, tokenPayload }: CreateCommentRequest,
     res: Response
   ): Promise<void> {
 
-    if (! await this.offerService.exists(body.offerId)) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Offer with id ${body.offerId} not found.`,
-        'CommentController'
-      );
-    }
-
-    const comment = await this.commentService.create(body);
+    const comment = await this.commentService.create({...body, userId: tokenPayload.id });
     await this.offerService.incCommentCount(body.offerId);
     this.created(res, fillDTO(CommentRdo, comment));
   }

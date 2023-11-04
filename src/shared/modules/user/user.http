@@ -5,10 +5,11 @@ POST http://localhost:5000/users/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "lebrone1@mail.net",
-  "avatarPath": "lebrone1.png",
-  "name": "Lebrone James First",
-  "password": "la-forever-one"
+  "email": "mrAnderson@mail.net",
+  "avatarPath": "mrAnderson.png",
+  "name": "Neo",
+  "password": "12345678",
+  "userType": "Pro"
 }
 
 ###
@@ -19,9 +20,15 @@ POST http://localhost:5000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "lebrone1@mail.net",
-  "password": "la-forever-one"
+  "email": "mrAnderson@mail.net",
+  "password": "12345678"
 }
+
+###
+
+## Проверить токен пользователя
+GET http://localhost:5000/users/login HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmVvIiwiZW1haWwiOiJtckFuZGVyc29uQG1haWwubmV0IiwidXNlclR5cGUiOiJQcm8iLCJpZCI6IjY1NDVlZWQ1N2RmOWUzZDMzOTk3NzRiOCIsImlhdCI6MTY5OTA4MjIxNiwiZXhwIjoxNjk5MjU1MDE2fQ.WvOI06Gyi3AlCw0-rKONnyz15O9O044HXw_W_DH7QGM
 
 ###
 
@@ -37,4 +44,19 @@ Content-Type: image/png
 < E:\picture\LlB_Hkf9LsU.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
-##
+###
+
+## Добавить или удалить объявление из избранного
+
+PUT http://localhost:5000/users/654263742fa5719801084195/favorites HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmV3IFVTZXIiLCJlbWFpbCI6Im5ld1VzZXJAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlVzZXIiLCJpZCI6IjY1NDI0NzU1NGY4OWI0MTk3YzdkOGY1OCIsImlhdCI6MTY5ODg0MjQ1OCwiZXhwIjoxNjk5MDE1MjU4fQ.QkxotG1YGXDAS1RLIRXy0f7JQSNnMTSjzObK1j5RVik
+Content-Type: application/json
+
+{
+  "isFavorite": true,
+  "offerId": "654263742fa5719801084195"
+}
+
+###
+
+

@@ -1,4 +1,4 @@
-import { Length, IsArray, IsDateString, IsEnum, IsInt, IsMongoId, Max, MaxLength, Min, ArrayMinSize, ArrayMaxSize, IsBoolean } from 'class-validator';
+import { Length, IsArray, IsDateString, IsEnum, IsInt, Max, MaxLength, Min, ArrayMinSize, ArrayMaxSize, IsBoolean } from 'class-validator';
 
 import { HousingType, Comfort, Cities } from '../../../types/index.js';
 import { TITLE, DESCRIPTION, ROOMS, GUESTS, PRICE, COORDINATES_LENGHT } from '../const/validate-offer.const.js';
@@ -23,10 +23,10 @@ export class CreateOfferDto {
   @MaxLength(256, { each: true, message: 'Too short for field «image»' })
   public images: string[];
 
-  @IsBoolean({ message: 'is not a biilean value' })
+  @IsBoolean({ message: 'is not a boolean value' })
   public isPremium: boolean;
 
-  @IsBoolean({ message: 'is not a biilean value' })
+  @IsBoolean({ message: 'is not a boolean value' })
   public isFavourites: boolean;
 
   @IsEnum(HousingType, { message: 'type must be housing type' })
@@ -51,7 +51,6 @@ export class CreateOfferDto {
   @IsEnum(Comfort, { each: true, message: 'type must be Comfort' })
   public comfort: Comfort[];
 
-  @IsMongoId({ message: 'userId field must be a valid id' })
   public userId: string;
 
   @IsArray({ message: 'Field comfort must be an array' })
