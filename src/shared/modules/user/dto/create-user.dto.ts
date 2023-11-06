@@ -11,13 +11,8 @@ export class CreateUserDto {
   @IsEmail({}, { message: 'email must be a valid address'})
   public email: string;
 
-  @IsString({ message: 'avatarPath is required' })
-  public avatarPath: string;
-
   @IsEnum(UserType, { message: 'type must be user type' })
   public userType: UserType;
-
-  public favouriteOffers: string[];
 
   @IsString({ message: 'password is required' })
   @Length(6, 12, { message: `min length for password is ${PASSWORD_VALIDATE_LENGHT.MIN}, max is ${PASSWORD_VALIDATE_LENGHT.MAX}` })

@@ -6,7 +6,6 @@ import {
   UploadFileMiddleware,
   ValidateObjectIdMiddleware,
   ParseTokenMiddleware,
-  // DocumentExistsMiddleware,
   PrivateRouteMiddleware,
 } from '../../libs/rest/index.js';
 import { Request, Response } from 'express';
@@ -19,9 +18,8 @@ import { fillDTO } from '../../helpers/common.js';
 import { Component } from '../../types/index.js';
 import { FavoriteOfferRequest } from '../offer/type/favorite-offer-request.type.js';
 import { AuthService } from '../auth/index.js';
-// import { OfferService } from '../offer/offer-service.interface.js';
-// import { UpdateUserDto } from './dto/update-user.dto.js';
 import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
+import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
 import { UserRdo } from './rdo/user.rdo.js';
 import { CreateUserRequest } from './create-user-request.type.js';
 import { UserService } from './index.js';
@@ -68,7 +66,7 @@ export class UserController extends BaseController {
       ]
     });
     this.addRoute({
-      path: '/:userId/favorites',
+      path: '/favorites',
       method: HttpMethod.Put,
       handler: this.markAsFavorite,
       middlewares: [
@@ -93,8 +91,7 @@ export class UserController extends BaseController {
     }
 
     const createUserBody = {
-      ...body,
-      favouriteOffers: []
+      ...body
     };
 
     const result = await this.userService.create(createUserBody, this.configService.get('SALT'));
@@ -107,11 +104,8 @@ export class UserController extends BaseController {
   ): Promise<void> {
     const user = await this.authService.verify(body);
     const token = await this.authService.authenticate(user);
-    const responseData = fillDTO(LoggedUserRdo, {
-      email: user.email,
-      token,
-    });
-    this.ok(res, responseData);
+    const responseData = fillDTO(LoggedUserRdo, user);
+    this.ok(res, Object.assign(responseData, { token }));
   }
 
   public async checkAuthenticate({ tokenPayload: { email }}: Request, res: Response) {
@@ -129,10 +123,11 @@ export class UserController extends BaseController {
     this.ok(res, fillDTO(UserRdo, foundedUser));
   }
 
-  public async uploadAvatar(req: Request, res: Response): Promise<void> {
-    this.created(res, {
-      filepath: req.file?.path,
-    });
+  public async uploadAvatar({ params, file }: Request, res: Response): Promise<void> {
+    const { userId } = params;
+    const uploadFile = { avatarPath: file?.filename };
+    await this.userService.updateById(userId, uploadFile);
+    this.created(res, fillDTO(UploadUserAvatarRdo, { filePath: uploadFile.avatarPath }));
   }
 
   public async markAsFavorite(
