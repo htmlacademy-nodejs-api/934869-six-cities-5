@@ -1,21 +1,20 @@
-import * as Mongoose from 'mongoose';
 import { inject, injectable } from 'inversify';
+import * as Mongoose from 'mongoose';
 import { setTimeout } from 'node:timers/promises';
-import { DatabaseClient } from './database-client.interface.js';
+
 import { Component } from '../../types/component.enum.js';
 import { Logger } from '../logger/index.js';
 import { RETRY } from './const.js';
+import { DatabaseClient } from './database-client.interface.js';
 
 @injectable()
 export class MongoDatabaseClient implements DatabaseClient {
   private mongoose: typeof Mongoose;
-  private isConnected: boolean;
+  private isConnected: boolean = false;
 
   constructor(
     @inject(Component.Logger) private readonly logger: Logger
-  ) {
-    this.isConnected = false;
-  }
+  ) {}
 
   public isConnectedToDatabase() {
     return this.isConnected;

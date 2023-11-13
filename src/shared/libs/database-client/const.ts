@@ -1,4 +1,4 @@
 export enum RETRY {
-  'COUNT' = 5,
-  'TIMEOUT' = 1000
+  COUNT = 5,
+  TIMEOUT = 1000
 }

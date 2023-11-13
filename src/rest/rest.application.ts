@@ -13,7 +13,9 @@ import { STATIC_FILES_ROUTE, STATIC_UPLOAD_ROUTE, LOGS } from './rest.constant.j
 
 @injectable()
 export class RestApplication {
-  private server: Express;
+
+  private readonly server: Express = express();
+
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.Config) private readonly config: Config<RestSchema>,
@@ -25,9 +27,7 @@ export class RestApplication {
     @inject(Component.AuthExceptionFilter) private readonly authExceptionFilter: ExceptionFilter,
     @inject(Component.HttpExceptionFilter) private readonly httpExceptionFilter: ExceptionFilter,
     @inject(Component.ValidationExceptionFilter) private readonly validationExceptionFilter: ExceptionFilter,
-  ) {
-    this.server = express();
-  }
+  ) {}
 
   private async initDb() {
     const mongoUri = getMongoURI(

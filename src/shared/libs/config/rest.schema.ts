@@ -28,7 +28,7 @@ export const configRestSchema = convict<RestSchema>({
     doc: 'Salt for password hash',
     format: String,
     env: 'SALT',
-    default: 'null'
+    default: null
   },
   DB_HOST: {
     doc: 'IP address of the database server (MongoDB)',
@@ -40,13 +40,13 @@ export const configRestSchema = convict<RestSchema>({
     doc: 'Username to connect to the database',
     format: String,
     env: 'DB_USER',
-    default: 'null',
+    default: null
   },
   DB_PASSWORD: {
     doc: 'Password to connect to the database',
     format: String,
     env: 'DB_PASSWORD',
-    default: 'null'
+    default: null
   },
   DB_PORT: {
     doc: 'Port to connect to the database (MongoDB)',
@@ -58,7 +58,7 @@ export const configRestSchema = convict<RestSchema>({
     doc: 'Database name (MongoDB)',
     format: String,
     env: 'DB_NAME',
-    default: 'six-sities'
+    default: null
   },
   UPLOAD_DIRECTORY: {
     doc: 'Directory for upload files',
@@ -70,7 +70,7 @@ export const configRestSchema = convict<RestSchema>({
     doc: 'JWT secret',
     format: String,
     env: 'JWT_SECRET',
-    default: 'null'
+    default: null
   },
   HOST: {
     doc: 'Host where started service',

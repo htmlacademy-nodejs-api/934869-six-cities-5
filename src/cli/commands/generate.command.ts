@@ -31,6 +31,10 @@ export class GenerateCommand implements Command {
   }
 
   public async execute(...parameters: string[]): Promise<void> {
+    if (parameters.length !== 3) {
+      throw new Error('Incorrect parameters');
+    }
+
     const [count, filepath, url] = parameters;
     const offerCount = Number.parseInt(count, 10);
 

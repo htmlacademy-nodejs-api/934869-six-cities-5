@@ -48,6 +48,6 @@ export function createOffer(offerData: string): Offer {
     comfort: comfort.split(',').map((key) => Comfort[key as keyof typeof Comfort]),
     user,
     comments: Number.parseInt(comments, 10),
-    coordinates: coordinates.split(',')
+    coordinates: coordinates.split(',').map((coordinate) => Number(coordinate))
   };
 }
