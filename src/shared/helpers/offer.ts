@@ -45,7 +45,7 @@ export function createOffer(offerData: string): Offer {
     rooms: Number.parseInt(rooms, 10),
     guestsNumber: Number.parseInt(guestsNumber, 10),
     price: Number.parseInt(price, 10),
-    comfort: comfort.split(',').map((key) => Comfort[key as keyof typeof Comfort]),
+    comfort: comfort.split(',').map((comfortType) => comfortType as Comfort),
     user,
     comments: Number.parseInt(comments, 10),
     coordinates: coordinates.split(',').map((coordinate) => Number(coordinate))
