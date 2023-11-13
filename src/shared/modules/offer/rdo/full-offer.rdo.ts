@@ -5,6 +5,9 @@ import { UserRdo } from '../../user/index.js';
 
 export class FullOfferRdo {
   @Expose()
+  public id: string;
+
+  @Expose()
   public title: string;
 
   @Expose()
@@ -51,7 +54,7 @@ export class FullOfferRdo {
   public user: UserRdo;
 
   @Expose()
-  public coordinates: string[];
+  public coordinates: number[];
 
   @Expose()
   public price: number;

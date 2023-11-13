@@ -1,8 +1,11 @@
 import { Expose } from 'class-transformer';
 
-import { UserType } from '../../../types/userType.enum.js';
+import { UserType } from '../../../types/user-type.enum.js';
 
 export class UserRdo {
+  @Expose()
+  public id: string;
+
   @Expose()
   public name: string;
 
@@ -13,5 +16,5 @@ export class UserRdo {
   public avatarPath: string;
 
   @Expose()
-  public userType: UserType;
+  public type: UserType;
 }

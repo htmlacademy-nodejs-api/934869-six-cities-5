@@ -1,14 +1,13 @@
 import { inject, injectable } from 'inversify';
-import { PipelineStage } from 'mongoose';
-import {Types} from 'mongoose';
+import mongoose, { PipelineStage } from 'mongoose';
 
 import { DocumentType, types } from '@typegoose/typegoose';
 
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { UserEntity } from '../user/index.js';
-import AGREGATE_OPERATIONS from './const/aggregate-operation.const.js';
-import { DEFAULT_OFFER_COUNT, DEFAULT_PREMIUM_OFFER_COUNT} from './const/offer.constant.js';
+import AGREGATE_OFFERS_OPERATIONS from './const/aggregate-operation.const.js';
+import { OffersNumber } from './const/offer.constant.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { OfferService } from './offer-service.interface.js';
@@ -32,7 +31,7 @@ export class DefaultOfferService implements OfferService {
 
   public async find(count?: number, userId?: string): Promise<DocumentType<OfferEntity>[]> {
 
-    const limit = { $limit: count ?? DEFAULT_OFFER_COUNT };
+    const limit = { $limit: count ?? OffersNumber.DEFAULT_OFFER_COUNT };
     let isFavourutesPipeline: PipelineStage;
 
     if(userId !== '') {
@@ -57,10 +56,12 @@ export class DefaultOfferService implements OfferService {
     const pipeLine: PipelineStage[] = [
       limit,
       isFavourutesPipeline,
-      AGREGATE_OPERATIONS.SORT_DOWN,
-      AGREGATE_OPERATIONS.COMMENTS_LOOKUP,
-      AGREGATE_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
-      AGREGATE_OPERATIONS.DELETE_COMMENTS_FIELD
+      AGREGATE_OFFERS_OPERATIONS.ADD_OFFER_ID,
+      AGREGATE_OFFERS_OPERATIONS.SORT_DOWN,
+      AGREGATE_OFFERS_OPERATIONS.COMMENTS_LOOKUP,
+      AGREGATE_OFFERS_OPERATIONS.USER_LOOKUP,
+      AGREGATE_OFFERS_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
+      AGREGATE_OFFERS_OPERATIONS.DELETE_COMMENTS_FIELD,
     ];
 
     return this.offerModel.aggregate(pipeLine).exec();
@@ -68,16 +69,22 @@ export class DefaultOfferService implements OfferService {
 
   public async findById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
 
-    const offerMongoId = new Types.ObjectId(offerId);
-    const findOperation = { $match: { _id: offerMongoId } };
+    const findOperation = {
+      $match: {
+        '_id': {
+          $eq: new mongoose.Types.ObjectId(offerId)
+        }
+      }
+    };
 
     const pipeLine: PipelineStage[] = [
       findOperation,
-      AGREGATE_OPERATIONS.COMMENTS_LOOKUP,
-      AGREGATE_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
-      AGREGATE_OPERATIONS.DELETE_COMMENTS_FIELD,
-      AGREGATE_OPERATIONS.USER_LOOKUP,
-      AGREGATE_OPERATIONS.UNWIND_USER
+      AGREGATE_OFFERS_OPERATIONS.ADD_OFFER_ID,
+      AGREGATE_OFFERS_OPERATIONS.COMMENTS_LOOKUP,
+      AGREGATE_OFFERS_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
+      AGREGATE_OFFERS_OPERATIONS.DELETE_COMMENTS_FIELD,
+      AGREGATE_OFFERS_OPERATIONS.USER_LOOKUP,
+      AGREGATE_OFFERS_OPERATIONS.UNWIND_USER
     ];
 
     const [ offer ] = await this.offerModel
@@ -109,15 +116,15 @@ export class DefaultOfferService implements OfferService {
 
   public async findPremimByCity(city: string, count?: number): Promise<DocumentType<OfferEntity>[]> {
 
-    const limit = { $limit: count ?? DEFAULT_PREMIUM_OFFER_COUNT };
+    const limit = { $limit: count ?? OffersNumber.DEFAULT_PREMIUM_OFFER_COUNT };
 
     const pipeLine: PipelineStage[] = [
       { $match : { city : city, isPremium: true } },
       limit,
-      AGREGATE_OPERATIONS.SORT_DOWN,
-      AGREGATE_OPERATIONS.COMMENTS_LOOKUP,
-      AGREGATE_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
-      AGREGATE_OPERATIONS.DELETE_COMMENTS_FIELD
+      AGREGATE_OFFERS_OPERATIONS.SORT_DOWN,
+      AGREGATE_OFFERS_OPERATIONS.COMMENTS_LOOKUP,
+      AGREGATE_OFFERS_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
+      AGREGATE_OFFERS_OPERATIONS.DELETE_COMMENTS_FIELD
     ];
 
     return this.offerModel.aggregate(pipeLine).exec();
@@ -143,10 +150,10 @@ export class DefaultOfferService implements OfferService {
           }
         }
       },
-      AGREGATE_OPERATIONS.SORT_DOWN,
-      AGREGATE_OPERATIONS.COMMENTS_LOOKUP,
-      AGREGATE_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
-      AGREGATE_OPERATIONS.DELETE_COMMENTS_FIELD
+      AGREGATE_OFFERS_OPERATIONS.SORT_DOWN,
+      AGREGATE_OFFERS_OPERATIONS.COMMENTS_LOOKUP,
+      AGREGATE_OFFERS_OPERATIONS.ADD_COMMENTS_INFO_FIELDS,
+      AGREGATE_OFFERS_OPERATIONS.DELETE_COMMENTS_FIELD
     ];
 
     return this.offerModel.aggregate(pipeline).exec();

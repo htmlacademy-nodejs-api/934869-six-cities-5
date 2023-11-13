@@ -9,7 +9,7 @@ import { LoginUserDto, UserEntity, UserService } from '../user/index.js';
 import { UserNotFoundException, UserPasswordIncorrectException } from './errors/index.js';
 import { TokenPayload } from './types/token-payload.type.js';
 import { AuthService } from './auth-service.interface.js';
-import { JWT_ALGORITHM, JWT_EXPIRED } from './auth.constant.js';
+import { AuthJWTParams } from './auth.enum.js';
 
 @injectable()
 export class DefaultAuthService implements AuthService {
@@ -25,28 +25,29 @@ export class DefaultAuthService implements AuthService {
     const tokenPayload: TokenPayload = {
       name: user.name,
       email: user.email,
-      userType: user.userType,
+      userType: user.type,
       id: user.id,
     };
 
     this.logger.info(`Create token for user ${user.email}`);
 
     return new SignJWT(tokenPayload)
-      .setProtectedHeader({ alg: JWT_ALGORITHM })
+      .setProtectedHeader({ alg: AuthJWTParams.JWT_ALGORITHM })
       .setIssuedAt()
-      .setExpirationTime(JWT_EXPIRED)
+      .setExpirationTime(AuthJWTParams.JWT_EXPIRED)
       .sign(secretKey);
   }
 
   public async verify(dto: LoginUserDto): Promise<UserEntity> {
     const user = await this.userService.findByEmail(dto.email);
+
     if(! user) {
       this.logger.warn(`User with email ${dto.email} not found`);
       throw new UserNotFoundException();
     }
 
-    if(! user.verifyPassword(dto.password, this.config.get('SALT'))) {
-      this.logger.warn(`Incorrect password for user ${dto.email}`);
+    if (! user.verifyPassword(dto.password, this.config.get('SALT'))) {
+      this.logger.warn(`Incorrect password for ${dto.email}`);
       throw new UserPasswordIncorrectException();
     }
 

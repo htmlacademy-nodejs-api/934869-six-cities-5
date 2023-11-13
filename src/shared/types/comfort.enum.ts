@@ -1,9 +1,9 @@
 export enum Comfort {
-  'Breakfast' = 'Breakfast',
-  'Air conditioning' = 'Air conditioning',
-  'Laptop friendly workspace' = 'Laptop friendly workspace',
-  'Baby seat' = 'Baby seat',
-  'Washer' = 'Washer',
-  'Towels' = 'Towels',
-  'Fridge' = 'Fridge',
+  BREAKFAST = 'Breakfast',
+  CONDITIONER = 'Air conditioning',
+  LAPTOP_FRIENDLY_WORKSPACE = 'Laptop friendly workspace',
+  BABY_SEAT = 'Baby seat',
+  WASHER = 'Washer',
+  TOWELS = 'Towels',
+  FRIDGE = 'Fridge',
 }

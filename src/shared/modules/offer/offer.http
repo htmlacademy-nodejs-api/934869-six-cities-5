@@ -1,29 +1,27 @@
 # Предложения
 ## Получить список предложений
 GET http://localhost:5000/offers HTTP/1.1
-# Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiTmVvIiwiZW1haWwiOiJtckFuZGVyc29uQG1haWwubmV0IiwidXNlclR5cGUiOiJQcm8iLCJpZCI6IjY1NDVlZWQ1N2RmOWUzZDMzOTk3NzRiOCIsImlhdCI6MTY5OTA4MjIxNiwiZXhwIjoxNjk5MjU1MDE2fQ.WvOI06Gyi3AlCw0-rKONnyz15O9O044HXw_W_DH7QGM
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiUmljayBTIiwiZW1haWwiOiJyaWNrLXNhbmNoZXNAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlBybyIsImlkIjoiNjU0OGI5ZThkYmMwYjJmZTg2MjI5Nzg4IiwiaWF0IjoxNjk5NzA4NTY2LCJleHAiOjE2OTk4ODEzNjZ9.62mouYYlT4OQBIstA_yH1jgJrzcAhEZmvfQbjw5jRCU
 
 ###
 
 ## Добавить новое предложение
 POST http://localhost:5000/offers HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiUmljayBTIiwiZW1haWwiOiJyaWNrLXNhbmNoZXNAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlBybyIsImlkIjoiNjU0OGI5ZThkYmMwYjJmZTg2MjI5Nzg4IiwiaWF0IjoxNjk5MjY2MTk2LCJleHAiOjE2OTk0Mzg5OTZ9.MBhKjgGwxJTT4f-rQg4niLWNRCuj3ONPepjHrQZxjjQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoibmVvIiwiZW1haWwiOiJtckFuZGVyc29uMUBtYWlsLm5ldCIsInVzZXJUeXBlIjoiVXNlciIsImlkIjoiNjU1MjY2ZjQ0NTVlZjc5ZTJhZGY2NzA0IiwiaWF0IjoxNjk5OTAwMDA0LCJleHAiOjE3MDAwNzI4MDR9.Ary1o7Er7Wsb0hKGUBeOBiZufffArA3goPgmBruZaU8
 Content-Type: application/json
 
 {
   "title": "Гараж Рика",
   "description": "Научные лаборатории, приключения. В самом доме приживает семья. Тихие люди...",
   "createdDate": "2023-09-23T16:17:26.406Z",
-  "city": "Brussels",
+  "city": "Paris",
   "images": [
-    "e:\flat design onix",
     "loft-hell-2.jpg",
     "loft-hell-3.jpg"
   ],
   "isPremium": true,
-  "rating": 0,
   "housingType": "apartment",
-  "rooms": 5,
+  "rooms": 3,
   "guestsNumber": 10,
   "price": 123,
   "comfort": [
@@ -31,15 +29,15 @@ Content-Type: application/json
     "Laptop friendly workspace",
     "Fridge"
   ],
-  "coordinates": ["48.85661", "2.351499"]
+  "coordinates": [48.85661, 2.351499]
 }
 
 
 ###
 
 ## Получить объявление по идентификатору
-GET http://localhost:5000/offers/6548cb77acdbdc41ed4a1e59 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiUmljayBTIiwiZW1haWwiOiJyaWNrLXNhbmNoZXNAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlBybyIsImlkIjoiNjU0OGI5ZThkYmMwYjJmZTg2MjI5Nzg4IiwiaWF0IjoxNjk5MjY2MTk2LCJleHAiOjE2OTk0Mzg5OTZ9.MBhKjgGwxJTT4f-rQg4niLWNRCuj3ONPepjHrQZxjjQ
+GET http://localhost:5000/offers/654f97b4e2c2d347b45df389 HTTP/1.1
+# Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiUmljayBTIiwiZW1haWwiOiJyaWNrLXNhbmNoZXNAbWFpbC5uZXQiLCJ1c2VyVHlwZSI6IlBybyIsImlkIjoiNjU0OGI5ZThkYmMwYjJmZTg2MjI5Nzg4IiwiaWF0IjoxNjk5MjY2MTk2LCJleHAiOjE2OTk0Mzg5OTZ9.MBhKjgGwxJTT4f-rQg4niLWNRCuj3ONPepjHrQZxjjQ
 
 ###
 

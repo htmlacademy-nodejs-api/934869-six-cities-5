@@ -1,6 +1,6 @@
 import { SortType } from '../../../types/sort-type.enum.js';
 
-const AGREGATE_OPERATIONS = {
+const AGREGATE_OFFERS_OPERATIONS = {
   USER_LOOKUP: {
     $lookup: {
       from: 'user',
@@ -13,6 +13,11 @@ const AGREGATE_OPERATIONS = {
     $unwind: {
       path: '$userId',
       preserveNullAndEmptyArrays: true,
+    }
+  },
+  ADD_OFFER_ID: {
+    $addFields: {
+      id: { $toString: '$_id' }
     }
   },
   ADD_IS_FAVOURITES_FIELD: {
@@ -42,12 +47,12 @@ const AGREGATE_OPERATIONS = {
     $unset: 'comments'
   },
   SORT_DOWN: {
-    $sort: { createdDate: SortType.Down }
+    $sort: { createdDate: SortType.DOWN }
   },
   SORT_UP: {
-    $sort: { createdDate: SortType.Up }
+    $sort: { createdDate: SortType.UP }
   }
 };
 
-export default AGREGATE_OPERATIONS;
+export default AGREGATE_OFFERS_OPERATIONS;
 

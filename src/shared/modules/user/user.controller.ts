@@ -33,32 +33,31 @@ export class UserController extends BaseController {
     @inject(Component.UserService) private readonly userService: UserService,
     @inject(Component.Config) private readonly configService: Config<RestSchema>,
     @inject(Component.AuthService) private readonly authService: AuthService,
-    // @inject(Component.OfferService) private readonly offerService: OfferService,
   ) {
     super(logger);
     this.logger.info('Register routes for UserController...');
 
     this.addRoute({
       path: '/register',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.create,
       middlewares: [ new ValidateDtoMiddleware(CreateUserDto) ]
     });
     this.addRoute({
       path: '/login',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.login,
       middlewares: [ new ValidateDtoMiddleware(LoginUserDto) ]
     });
     this.addRoute({
       path: '/login',
-      method: HttpMethod.Get,
+      method: HttpMethod.GET,
       handler: this.checkAuthenticate,
       middlewares: [ new ParseTokenMiddleware(this.configService.get('JWT_SECRET'))]
     });
     this.addRoute({
       path: '/:userId/avatar',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.uploadAvatar,
       middlewares: [
         new ValidateObjectIdMiddleware('userId'),
@@ -67,7 +66,7 @@ export class UserController extends BaseController {
     });
     this.addRoute({
       path: '/favorites',
-      method: HttpMethod.Put,
+      method: HttpMethod.PUT,
       handler: this.markAsFavorite,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
@@ -95,7 +94,8 @@ export class UserController extends BaseController {
     };
 
     const result = await this.userService.create(createUserBody, this.configService.get('SALT'));
-    this.created(res, fillDTO(UserRdo, result));
+    const user = await this.userService.findByEmailWithId(result.email);
+    this.created(res, fillDTO(UserRdo, user));
   }
 
   public async login(

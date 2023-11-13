@@ -30,6 +30,6 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 
     res
       .status(StatusCodes.BAD_REQUEST)
-      .json(createErrorObject(ApplicationError.ValidationError, error.message, error.details));
+      .json(createErrorObject(ApplicationError.VALIDATION_ERROR, error.message, error.details));
   }
 }

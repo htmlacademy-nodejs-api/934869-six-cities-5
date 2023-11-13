@@ -9,11 +9,13 @@ import { Controller, ExceptionFilter, ParseTokenMiddleware } from '../shared/lib
 import { getMongoURI } from '../shared/helpers/database.js';
 import { getFullServerPath } from '../shared/helpers/index.js';
 import { Component } from '../shared/types/component.enum.js';
-import { STATIC_FILES_ROUTE, STATIC_UPLOAD_ROUTE } from './rest.constant.js';
+import { STATIC_FILES_ROUTE, STATIC_UPLOAD_ROUTE, LOGS } from './rest.constant.js';
 
 @injectable()
 export class RestApplication {
-  private server: Express;
+
+  private readonly server: Express = express();
+
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.Config) private readonly config: Config<RestSchema>,
@@ -25,9 +27,7 @@ export class RestApplication {
     @inject(Component.AuthExceptionFilter) private readonly authExceptionFilter: ExceptionFilter,
     @inject(Component.HttpExceptionFilter) private readonly httpExceptionFilter: ExceptionFilter,
     @inject(Component.ValidationExceptionFilter) private readonly validationExceptionFilter: ExceptionFilter,
-  ) {
-    this.server = express();
-  }
+  ) {}
 
   private async initDb() {
     const mongoUri = getMongoURI(
@@ -66,7 +66,7 @@ export class RestApplication {
     );
 
     this.server.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
-    this.server.use(cors);
+    this.server.use(cors());
   }
 
   private async initExceptionFilters() {
@@ -77,26 +77,26 @@ export class RestApplication {
   }
 
   public async init() {
-    this.logger.info('Application initialization');
+    this.logger.info(LOGS.APP_INIT);
 
-    this.logger.info('Init database...');
+    this.logger.info(LOGS.DB_INIT);
     await this.initDb();
-    this.logger.info('Init database complited');
+    this.logger.info(LOGS.DB_READY);
 
-    this.logger.info('Init app-level middleware');
+    this.logger.info(LOGS.MIDDLEWARE_INIT);
     await this.initMiddleware();
-    this.logger.info('App-level middleware initialization completed');
+    this.logger.info(LOGS.MIDDLEWARE_READY);
 
-    this.logger.info('Init controllers');
+    this.logger.info(LOGS.CONTROLLER_INIT);
     await this.initControllers();
-    this.logger.info('Controller initialization completed');
+    this.logger.info(LOGS.CONTROLLER_READY);
 
-    this.logger.info('Init exception filters');
+    this.logger.info(LOGS.EXCEPTION_FILTER_INIT);
     await this.initExceptionFilters();
-    this.logger.info('Exception filters initialization compleated');
+    this.logger.info(LOGS.EXCEPTION_FILTER_READY);
 
-    this.logger.info('Try to init server...');
+    this.logger.info(LOGS.SERVER_INIT);
     await this.initServer();
-    this.logger.info(`🚀 Server started on ${getFullServerPath(this.config.get('HOST'), this.config.get('PORT'))}`);
+    this.logger.info(`${LOGS.SERVER_STARTED} ${getFullServerPath(this.config.get('HOST'), this.config.get('PORT'))}`);
   }
 }

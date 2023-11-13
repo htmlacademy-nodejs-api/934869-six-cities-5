@@ -24,9 +24,6 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({trim: true, required: true})
   public description: string;
 
-  @prop({required: true})
-  public createdDate!: Date;
-
   @prop({
     ref: String,
     required: true,
@@ -45,7 +42,6 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop()
   public isFavourites!: boolean;
 
-  @prop({required: true})
   public rating!: number;
 
   @prop({
@@ -79,7 +75,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   public commentsCount: number;
 
   @prop({required: true})
-  public coordinates!: [];
+  public coordinates!: number[];
 }
 
 export const OfferModel = getModelForClass(OfferEntity);
