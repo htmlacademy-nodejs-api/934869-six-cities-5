@@ -1,6 +1,6 @@
 import { IsEnum, MaxLength, MinLength, IsEmail, IsString, Length} from 'class-validator';
 
-import { UserType } from '../../../types/userType.enum.js';
+import { UserType } from '../../../types/user-type.enum.js';
 import { NAME_VALIDATE_LENGHT, PASSWORD_VALIDATE_LENGHT } from '../const/validate-user.const.js';
 
 export class CreateUserDto {

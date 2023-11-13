@@ -21,6 +21,6 @@ export class AppExceptionFilter implements ExceptionFilter {
 
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json(createErrorObject(ApplicationError.CommonError, error.message));
+      .json(createErrorObject(ApplicationError.COMMON_ERROR, error.message));
   }
 }

@@ -1,5 +1,5 @@
 export enum ApplicationError {
-  ValidationError = 'VALIDATION_ERROR',
-  CommonError = 'COMMON_ERROR',
-  ServiceError = 'SERVICE_ERROR',
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  COMMON_ERROR = 'COMMON_ERROR',
+  SERVICE_ERROR = 'SERVICE_ERROR',
 }

@@ -47,10 +47,10 @@ const AGREGATE_OFFERS_OPERATIONS = {
     $unset: 'comments'
   },
   SORT_DOWN: {
-    $sort: { createdDate: SortType.Down }
+    $sort: { createdDate: SortType.DOWN }
   },
   SORT_UP: {
-    $sort: { createdDate: SortType.Up }
+    $sort: { createdDate: SortType.UP }
   }
 };
 

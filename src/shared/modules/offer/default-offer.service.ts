@@ -7,7 +7,7 @@ import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { UserEntity } from '../user/index.js';
 import AGREGATE_OFFERS_OPERATIONS from './const/aggregate-operation.const.js';
-import { DEFAULT_OFFER_COUNT, DEFAULT_PREMIUM_OFFER_COUNT} from './const/offer.constant.js';
+import { OffersNumber } from './const/offer.constant.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { UpdateOfferDto } from './dto/update-offer.dto.js';
 import { OfferService } from './offer-service.interface.js';
@@ -31,7 +31,7 @@ export class DefaultOfferService implements OfferService {
 
   public async find(count?: number, userId?: string): Promise<DocumentType<OfferEntity>[]> {
 
-    const limit = { $limit: count ?? DEFAULT_OFFER_COUNT };
+    const limit = { $limit: count ?? OffersNumber.DEFAULT_OFFER_COUNT };
     let isFavourutesPipeline: PipelineStage;
 
     if(userId !== '') {
@@ -116,7 +116,7 @@ export class DefaultOfferService implements OfferService {
 
   public async findPremimByCity(city: string, count?: number): Promise<DocumentType<OfferEntity>[]> {
 
-    const limit = { $limit: count ?? DEFAULT_PREMIUM_OFFER_COUNT };
+    const limit = { $limit: count ?? OffersNumber.DEFAULT_PREMIUM_OFFER_COUNT };
 
     const pipeLine: PipelineStage[] = [
       { $match : { city : city, isPremium: true } },

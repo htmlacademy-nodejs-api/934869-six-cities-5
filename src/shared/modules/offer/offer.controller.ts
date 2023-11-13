@@ -17,7 +17,7 @@ import { Logger } from '../../libs/logger/index.js';
 import { fillDTO } from '../../helpers/common.js';
 import { Component } from '../../types/index.js';
 import { CommentRdo, CommentService } from '../comment/index.js';
-import { DEFAULT_PREMIUM_OFFER_COUNT, DEFAULT_OFFER_COUNT, DEFAULT_PREVIEW_IMAGE } from './const/offer.constant.js';
+import { DefaultPreviewImage, OffersNumber } from './const/offer.constant.js';
 import { UploadPreviewImageRdo } from './rdo/upload-preview-image.rdo.js';
 import { ParamOfferId, ParamCity, UpdateOfferDto } from './index.js';
 import { OfferRdo, FullOfferRdo } from './index.js';
@@ -38,7 +38,7 @@ export class OfferController extends BaseController {
 
     this.addRoute({
       path: '/',
-      method: HttpMethod.Get,
+      method: HttpMethod.GET,
       handler: this.index,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
@@ -46,7 +46,7 @@ export class OfferController extends BaseController {
     });
     this.addRoute({
       path: '/',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.create,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
@@ -56,7 +56,7 @@ export class OfferController extends BaseController {
     });
     this.addRoute({
       path: '/:offerId',
-      method: HttpMethod.Get,
+      method: HttpMethod.GET,
       handler: this.show,
       middlewares: [
         new ValidateObjectIdMiddleware('offerId'),
@@ -65,7 +65,7 @@ export class OfferController extends BaseController {
     });
     this.addRoute({
       path: '/:offerId',
-      method: HttpMethod.Delete,
+      method: HttpMethod.DELETE,
       handler: this.delete,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
@@ -77,7 +77,7 @@ export class OfferController extends BaseController {
     });
     this.addRoute({
       path: '/:offerId',
-      method: HttpMethod.Patch,
+      method: HttpMethod.PATCH,
       handler: this.update,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
@@ -90,17 +90,17 @@ export class OfferController extends BaseController {
     });
     this.addRoute({
       path: '/:offerId/comments',
-      method: HttpMethod.Get,
+      method: HttpMethod.GET,
       handler: this.getComments,
       middlewares: [
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ]
     });
-    this.addRoute({ path: '/premium/:city', method: HttpMethod.Get, handler: this.getPremium });
+    this.addRoute({ path: '/premium/:city', method: HttpMethod.GET, handler: this.getPremium });
     this.addRoute({
       path: '/bundles/favorites',
-      method: HttpMethod.Get,
+      method: HttpMethod.GET,
       handler: this.getFavourites,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
@@ -109,7 +109,7 @@ export class OfferController extends BaseController {
     });
     this.addRoute({
       path: '/:offerId/offerPreview',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.uploadPreviewImage,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),
@@ -127,7 +127,7 @@ export class OfferController extends BaseController {
       userId = body.tokenPayload.id;
     }
 
-    const offers = await this.offerService.find(DEFAULT_OFFER_COUNT, userId);
+    const offers = await this.offerService.find(OffersNumber.DEFAULT_OFFER_COUNT, userId);
 
     this.ok(res, fillDTO(FullOfferRdo, offers));
   }
@@ -138,7 +138,7 @@ export class OfferController extends BaseController {
   ): Promise<void> {
     const bodyWithDefaultValues = {
       ...body,
-      previewImage: DEFAULT_PREVIEW_IMAGE
+      previewImage: DefaultPreviewImage.IMAGE_PATH
     };
     const result = await this.offerService.create({ ...bodyWithDefaultValues, userId: tokenPayload.id });
     const offer = await this.offerService.findById(result.id);
@@ -167,7 +167,7 @@ export class OfferController extends BaseController {
   }
 
   public async getPremium({ params }: Request<ParamCity>, res: Response): Promise<void> {
-    const premiumOffers = await this.offerService.findPremimByCity(params.city, DEFAULT_PREMIUM_OFFER_COUNT);
+    const premiumOffers = await this.offerService.findPremimByCity(params.city, OffersNumber.DEFAULT_PREMIUM_OFFER_COUNT);
     this.ok(res, fillDTO(OfferRdo, premiumOffers));
   }
 

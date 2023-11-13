@@ -1,4 +1,4 @@
-import { UserType } from '../../../types/userType.enum.js';
+import { UserType } from '../../../types/user-type.enum.js';
 
 export type TokenPayload = {
   name: string;

@@ -39,25 +39,25 @@ export class UserController extends BaseController {
 
     this.addRoute({
       path: '/register',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.create,
       middlewares: [ new ValidateDtoMiddleware(CreateUserDto) ]
     });
     this.addRoute({
       path: '/login',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.login,
       middlewares: [ new ValidateDtoMiddleware(LoginUserDto) ]
     });
     this.addRoute({
       path: '/login',
-      method: HttpMethod.Get,
+      method: HttpMethod.GET,
       handler: this.checkAuthenticate,
       middlewares: [ new ParseTokenMiddleware(this.configService.get('JWT_SECRET'))]
     });
     this.addRoute({
       path: '/:userId/avatar',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.uploadAvatar,
       middlewares: [
         new ValidateObjectIdMiddleware('userId'),
@@ -66,7 +66,7 @@ export class UserController extends BaseController {
     });
     this.addRoute({
       path: '/favorites',
-      method: HttpMethod.Put,
+      method: HttpMethod.PUT,
       handler: this.markAsFavorite,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),

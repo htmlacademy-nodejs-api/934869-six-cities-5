@@ -9,7 +9,7 @@ import { LoginUserDto, UserEntity, UserService } from '../user/index.js';
 import { UserNotFoundException, UserPasswordIncorrectException } from './errors/index.js';
 import { TokenPayload } from './types/token-payload.type.js';
 import { AuthService } from './auth-service.interface.js';
-import { JWT_ALGORITHM, JWT_EXPIRED } from './auth.constant.js';
+import { AuthJWTParams } from './auth.enum.js';
 
 @injectable()
 export class DefaultAuthService implements AuthService {
@@ -32,9 +32,9 @@ export class DefaultAuthService implements AuthService {
     this.logger.info(`Create token for user ${user.email}`);
 
     return new SignJWT(tokenPayload)
-      .setProtectedHeader({ alg: JWT_ALGORITHM })
+      .setProtectedHeader({ alg: AuthJWTParams.JWT_ALGORITHM })
       .setIssuedAt()
-      .setExpirationTime(JWT_EXPIRED)
+      .setExpirationTime(AuthJWTParams.JWT_EXPIRED)
       .sign(secretKey);
   }
 

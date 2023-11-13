@@ -31,7 +31,7 @@ export default class CommentController extends BaseController {
     this.logger.info('Register routes for CommentController...');
     this.addRoute({
       path: '/',
-      method: HttpMethod.Post,
+      method: HttpMethod.POST,
       handler: this.create,
       middlewares: [
         new ParseTokenMiddleware(this.configService.get('JWT_SECRET')),

@@ -1,6 +1,11 @@
-export const DEFAULT_OFFER_COUNT = 60;
-export const DEFAULT_PREMIUM_OFFER_COUNT = 3;
-export const DEFAULT_PREVIEW_IMAGE = 'default-preview-image.jpg';
+export enum OffersNumber {
+  DEFAULT_OFFER_COUNT = 60,
+  DEFAULT_PREMIUM_OFFER_COUNT = 3,
+}
+
+export enum DefaultPreviewImage {
+  IMAGE_PATH = 'default-preview-image.jpg'
+}
 
 export enum Latitude {
   MIN = 48.85661,

@@ -28,7 +28,7 @@ export function createOffer(offerData: string): Offer {
     name: userName,
     email: userEmail,
     avatarPath: userAvatar,
-    type: UserType[userType as 'User' | 'Pro']
+    type: userType as UserType
   };
 
   return {
